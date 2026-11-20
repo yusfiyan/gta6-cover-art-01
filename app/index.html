@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vice Coast Cover Studio — GTA-style cover art maker</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23ffd166'/%3E%3Cstop offset='.6' stop-color='%23ff5e62'/%3E%3Cstop offset='1' stop-color='%23ff2e88'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='12' fill='url(%23g)'/%3E%3Ctext x='32' y='44' font-family='Arial Black, sans-serif' font-size='28' font-weight='900' fill='%231c0f33' text-anchor='middle'%3EVC%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark">VC</span>
+    <div>
+      <h1>Vice Coast Cover Studio</h1>
+      <p>Turn any photo and a caption into GTA-style poster cover art. Offline — your photos never leave this machine.</p>
+    </div>
+  </div>
+  <div class="top-actions">
+    <button id="undoBtn" type="button" title="Undo (Ctrl+Z)">Undo</button>
+    <button id="redoBtn" type="button" title="Redo (Ctrl+Shift+Z)">Redo</button>
+    <button id="resetBtn" type="button" title="Back to the starting cover">Reset</button>
+  </div>
+</header>
+
+<main class="app">
+  <aside class="controls" aria-label="Cover controls">
+    <section class="group">
+      <h2>1 · Photos</h2>
+      <p class="hint">Up to three photos. Panels can each use any of them.</p>
+      <div class="slot" data-slot="0">
+        <img id="thumb0" class="thumb" alt="Photo 1">
+        <div class="slot-body">
+          <label>Photo 1 <input id="file0" type="file" accept="image/*"></label>
+          <button id="sample0" type="button">Use sample: boulevard</button>
+        </div>
+      </div>
+      <div class="slot" data-slot="1">
+        <img id="thumb1" class="thumb" alt="Photo 2">
+        <div class="slot-body">
+          <label>Photo 2 <input id="file1" type="file" accept="image/*"></label>
+          <button id="sample1" type="button">Use sample: pier</button>
+        </div>
+      </div>
+      <div class="slot" data-slot="2">
+        <img id="thumb2" class="thumb" alt="Photo 3">
+        <div class="slot-body">
+          <label>Photo 3 <input id="file2" type="file" accept="image/*"></label>
+          <button id="sample2" type="button">Use sample: boulevard</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="group">
+      <h2>2 · Layout</h2>
+      <div class="picker" id="layoutPicker" role="group" aria-label="Layout">
+        <button type="button" data-layout="nine">Nine-Panel Grid</button>
+        <button type="button" data-layout="hero3">Hero + Three</button>
+        <button type="button" data-layout="grid4">Four Corners</button>
+        <button type="button" data-layout="full">Full Bleed</button>
+        <button type="button" data-layout="tilt">Tilted Snapshots</button>
+        <button type="button" data-layout="duo">Split Duo</button>
+        <button type="button" data-layout="strip">Sunset Strip</button>
+      </div>
+    </section>
+
+    <section class="group">
+      <h2>3 · Grade</h2>
+      <div class="picker" id="gradePicker" role="group" aria-label="Colour grade">
+        <button type="button" data-grade="sunset">Vice Sunset</button>
+        <button type="button" data-grade="neon">Neon Nights</button>
+        <button type="button" data-grade="gold">Golden Hour</button>
+        <button type="button" data-grade="noir">Palm Noir</button>
+        <button type="button" data-grade="bubble">Bubblegum</button>
+        <button type="button" data-grade="teal">Teal Heat</button>
+      </div>
+    </section>
+
+    <section class="group">
+      <h2>4 · Caption</h2>
+      <label>Title <input id="titleInput" type="text" maxlength="24" value="VICE COAST"></label>
+      <label>Subtitle <input id="subtitleInput" type="text" maxlength="32" value="neon nights"></label>
+      <label>Badge <input id="badgeInput" type="text" maxlength="16" value="VICE COAST"></label>
+    </section>
+
+    <section class="group">
+      <h2>5 · Selected panel</h2>
+      <p class="hint" id="panelLabel">Click a panel in the preview to select it, then drag the photo to move it, scroll to zoom.</p>
+      <label>Photo in this panel
+        <select id="panelPhoto"></select>
+      </label>
+      <label>Zoom <input id="zoomRange" type="range" min="0.6" max="3" step="0.05" value="1"></label>
+      <label>Move left / right <input id="oxRange" type="range" min="-1" max="1" step="0.05" value="0"></label>
+      <label>Move up / down <input id="oyRange" type="range" min="-1" max="1" step="0.05" value="0"></label>
+      <button id="fillAllBtn" type="button">Fill every panel with this photo</button>
+    </section>
+
+    <section class="group">
+      <h2>6 · Size &amp; export</h2>
+      <div class="picker" id="sizePicker" role="group" aria-label="Export size">
+        <button type="button" data-size="square">Square 1080 × 1080</button>
+        <button type="button" data-size="portrait">Portrait 1080 × 1350</button>
+        <button type="button" data-size="wide">Wide 1920 × 1080</button>
+        <button type="button" data-size="story">Story 1080 × 1920</button>
+      </div>
+      <button id="exportBtn" type="button" class="primary">Export PNG</button>
+      <button id="exportAllBtn" type="button">Export all four sizes</button>
+      <p id="status" role="status"></p>
+    </section>
+  </aside>
+
+  <section class="stage">
+    <canvas id="preview" width="760" height="760" aria-label="Live cover preview"></canvas>
+    <p class="stage-hint">Live preview — what you see is what the PNG holds.</p>
+  </section>
+</main>
+
+<script type="module" src="./src/main.js"></script>
+</body>
+</html>
