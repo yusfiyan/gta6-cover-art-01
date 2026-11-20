@@ -194,8 +194,10 @@ export function hitPanel(layout, W, H, x, y) {
  * Draws `img` into an offscreen context of ow x oh, cover-fitting with a
  * focus point in the photo's own fractions, then the user's zoom and pan
  * offsets. The focus keeps heads in frame when a portrait photo fills a
- * wide panel: fy 0.35 anchors the crop on the upper third instead of the
- * middle, where a face usually is.
+ * wide panel: a face sits in the photo's top third, and a wide panel only
+ * shows about a third of the photo's height, so fy 0.05 anchors the crop
+ * near the top of the photo instead of the middle. (fy 0.35 put the band
+ * below the face: only the mouth and chin showed in the hero panel.)
  */
 export function coverDrawImage(octx, img, ow, oh, zoom, ox, oy) {
   const base = Math.max(ow / img.naturalWidth, oh / img.naturalHeight);
@@ -203,7 +205,7 @@ export function coverDrawImage(octx, img, ow, oh, zoom, ox, oy) {
   const dw = img.naturalWidth * scale;
   const dh = img.naturalHeight * scale;
   const fx = 0.5;
-  const fy = 0.35;
+  const fy = 0.05;
   let dx = dw > ow ? -(dw - ow) * fx : (ow - dw) / 2;
   let dy = dh > oh ? -(dh - oh) * fy : (oh - dh) / 2;
   dx += (ox || 0) * ow * 0.5;
